@@ -1,45 +1,46 @@
 import { useState } from "react";
+import { Input } from './Input'
 
 export default function Login() {
 
-  const [enteredValues , setEnteredValues] = useState({
-    email: '', 
+  const [enteredValues, setEnteredValues] = useState({
+    email: '',
     password: '',
   });
 
-  const [didEdit , setDidEdit] = useState({
-    email: false, 
-    password: false, 
+  const [didEdit, setDidEdit] = useState({
+    email: false,
+    password: false,
   })
 
   const emailIsInvalid = didEdit.email && !enteredValues.email.includes('@');
+  const passwordIsInvalid = didEdit.password && enteredValues.password.trim().length < 6;
 
-
-  function hanndleInputChange(identifier,event) {
-    setEnteredValues(prev=> ({
-      ...prev, 
+  function hanndleInputChange(identifier, event) {
+    setEnteredValues(prev => ({
+      ...prev,
       [identifier]: event.target.value,
     }))
 
-    setDidEdit(prev=> (
+    setDidEdit(prev => (
       {
-        ...prev, 
+        ...prev,
         [identifier]: false,
       }
     ))
   }
 
   function handleSubmit(event) {
-    event.preventDefatult(); 
+    event.preventDefatult();
     setEnteredValues({
-      email: '', 
+      email: '',
       password: '',
     });
   }
 
-  function hanndleInputBlur(identifier){
+  function hanndleInputBlur(identifier) {
     setDidEdit(prev => ({
-      ...prev, 
+      ...prev,
       [identifier]: true,
     }))
   }
@@ -50,22 +51,17 @@ export default function Login() {
       <h2>Login</h2>
 
       <div className="control-row">
-        <div className="control no-margin">
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" name="email"
-          onChange={(event)=>hanndleInputChange('email', event)}
-          onBlur={() => hanndleInputBlur('email')}/>
-          <div className="control-error">
-            {emailIsInvalid && <p>Please enter a valid email address.</p>}
-          </div>
-        </div>  
+        <Input label="Email" id="email" name="email" type='email'
+          onChange={(event) => hanndleInputChange('email', event)}
+          onBlur={() => hanndleInputBlur('email')}
+          error="Please enter a valid email address."
+        />
 
-        <div className="control no-margin">
-          <label htmlFor="password">Password</label>
-          <input id="password" type="password" name="password" 
-          onChange={(event)=>hanndleInputChange('password', event)}
-         />
-        </div>
+        <Input label="Password" id="password" name="password" type='password'
+          onChange={(event) => hanndleInputChange('password', event)}
+          onBlur={() => hanndleInputBlur('password')}
+          error="Please enter a valid password"
+        />
       </div>
 
       <p className="form-actions">
