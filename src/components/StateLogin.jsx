@@ -1,50 +1,33 @@
 import { useState } from "react";
-import { Input } from './Input'
+import  Input  from './Input';
+import { isEmail , isNotEmpty , hasMinLength } from "../util/validation";
+import { useInput } from "../hooks/useInput";
 
 export default function Login() {
 
-  const [enteredValues, setEnteredValues] = useState({
-    email: '',
-    password: '',
-  });
+  const {
+    value: emailValue,
+    hanndleInputChange: handleEmailChange, 
+    hanndleInputBlur: handleEmailBlur,
+    hasError: emailHasError,
+  } = useInput('' , (value)=> isEmail(value) && isNotEmpty(value));
 
-  const [didEdit, setDidEdit] = useState({
-    email: false,
-    password: false,
-  })
 
-  const emailIsInvalid = didEdit.email && !enteredValues.email.includes('@');
-  const passwordIsInvalid = didEdit.password && enteredValues.password.trim().length < 6;
+  const {
+    value: passwordValue, 
+    handleEmailChange: handlePasswordChange,
+    hanndleInputBlur: handlePasswordBlur, 
+    hasError: passwordHasError
+  } = useState('', (value)=>hasMinLength(value,6) );
 
-  function hanndleInputChange(identifier, event) {
-    setEnteredValues(prev => ({
-      ...prev,
-      [identifier]: event.target.value,
-    }))
-
-    setDidEdit(prev => (
-      {
-        ...prev,
-        [identifier]: false,
-      }
-    ))
-  }
-
-  function handleSubmit(event) {
+  function handleSubmit(event) { 
     event.preventDefatult();
-    setEnteredValues({
-      email: '',
-      password: '',
-    });
-  }
+    
+    if( emailHasError || passwordHasError)
+      return; 
 
-  function hanndleInputBlur(identifier) {
-    setDidEdit(prev => ({
-      ...prev,
-      [identifier]: true,
-    }))
+    console.log(emailValue , passwordValue);
   }
-
 
   return (
     <form onSubmit={handleSubmit}>
@@ -52,15 +35,17 @@ export default function Login() {
 
       <div className="control-row">
         <Input label="Email" id="email" name="email" type='email'
-          onChange={(event) => hanndleInputChange('email', event)}
-          onBlur={() => hanndleInputBlur('email')}
-          error="Please enter a valid email address."
+          onChange={handleEmailChange  }
+          onBlur={handleEmailBlur}
+          value ={emailValue}
+          error={ emailHasError && "Please enter a valid email address."}
         />
 
         <Input label="Password" id="password" name="password" type='password'
-          onChange={(event) => hanndleInputChange('password', event)}
-          onBlur={() => hanndleInputBlur('password')}
-          error="Please enter a valid password"
+          onChange={handlePasswordChange}
+          onBlur={handlePasswordBlur}
+          value ={passwordValue}
+          error={passwordHasError && "Please enter a valid password"}
         />
       </div>
 
